@@ -1,5 +1,18 @@
 <?php
 session_start();
+$timeout = 30; 
+
+if (isset($_SESSION['LAST_ACTIVITY'])) {
+    if (time() - $_SESSION['LAST_ACTIVITY'] > $timeout) {
+        session_unset();
+        session_destroy();
+
+        header("Location: /zoopedia/views/user/login.php?pesan=timeout");
+        exit;
+    }
+}
+
+$_SESSION['LAST_ACTIVITY'] = time();
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../models/Soal.php';
  
@@ -119,11 +132,11 @@ $soal = $soalModel->findAll();
         </div>
         <div class="form-group">
           <label>Penjelasan</label>
-          <textarea name="penjelasan" placeholder="Jelaskan kenapa jawaban tersebut benar..."></textarea>
+          <textarea name="penjelasan" placeholder="Jelaskan kenapa jawaban tersebut benar..." required></textarea>
         </div>
         <div class="form-group">
-          <label>Gambar Soal <span class="text-muted" style="font-size:11px;">(opsional)</span></label>
-          <input type="file" name="gambar" accept="image/*" />
+          <label>Gambar Soal</label>
+          <input type="file" name="gambar" accept="image/*" required />
         </div>
         <div class="modal-btns">
           <button type="button" onclick="document.getElementById('modalTambah').classList.remove('show')" class="btn btn-outline">Batal</button>
@@ -155,7 +168,7 @@ $soal = $soalModel->findAll();
         </div>
         <div class="form-group">
           <label>Penjelasan</label>
-          <textarea name="penjelasan" id="edit-penjelasan"></textarea>
+          <textarea name="penjelasan" id="edit-penjelasan" required></textarea>
         </div>
         <div class="form-group">
           <label>Gambar Soal <span class="text-muted" style="font-size:11px;">(kosongkan jika tidak ingin mengubah)</span></label>
